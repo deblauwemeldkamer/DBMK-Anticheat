@@ -1,4 +1,4 @@
-## v2026.05.27.02 — Security, vehicle spawn fixes, animated background, UI improvements
+## DBMK Anticheat — Patch Notes (bundle `v2026.05.27.02`)
 
 ### 🚨 Security
 
@@ -11,7 +11,7 @@
 - Per-callback cooldown: **250ms** tussen identieke calls
 - Burst limit: **max 15 calls/sec** over alle callbacks
 - Alle 30+ NUI tablet callbacks zijn nu gewrapped met `nuiWrapped()`
-- **Effect:** een cheater kan de tablet niet meer floden met duizenden kick/ban/teleport calls
+- **Effect:** een cheater kan de tablet niet meer flooden met duizenden kick/ban/teleport calls
 
 #### Tablet Token Fix
 - **Oud:** `"SECURE_" .. GetPlayerServerId(PlayerId())` — voorspelbaar
@@ -36,11 +36,19 @@ Nieuwe client-side scan (elke 13s) die detecteert:
 
 ### 🚗 Vehicle Spawn Policy — False Positives
 
-- **Grace window:** 1.200ms → **5.000ms** (max 15.000ms)
-- **Periodieke rechecks:** elke 1.500ms checken i.p.v. eenmalig wachten — als `grant_vehicle_spawn_grace` binnen 15s alsnog komt, wordt voertuig gespaard
-- **Auto-grace events** toegevoegd voor: `jg_advancedgarages`, `jg_garages`, `qb-garage`, `cd_garage`, `okokgarage`, `qs-*`, `jim-shops`, `jim-mechanic`
+- **Grace window:** `1.200ms` → `5.000ms` (max `15.000ms`)
+- **Periodieke rechecks:** elke `1.500ms` checken i.p.v. eenmalig wachten — als `grant_vehicle_spawn_grace` binnen 15s alsnog komt, wordt voertuig gespaard
+- **Auto-grace events** toegevoegd voor:
+  - `jg_advancedgarages`
+  - `jg_garages`
+  - `qb-garage`
+  - `cd_garage`
+  - `okokgarage`
+  - `qs-*`
+  - `jim-shops`
+  - `jim-mechanic`
 - **`allowedVehicleModels`** — nieuw veld + UI + config loader. Modellen in deze lijst skippen de policy check volledig
-- Grace period: 14s → 20s
+- Grace period: `14s` → `20s`
 - Configuratie-sync via `/api/fivem/policies` — geen nieuwe bundle nodig
 
 ---
@@ -50,16 +58,22 @@ Nieuwe client-side scan (elke 13s) die detecteert:
 - **`weaponWhitelistEnabled`** toggle in Event Policies ("Strict whitelist" aan/uit)
 - **OFF:** alleen "Geblokkeerde wapens" worden gehandhaafd (blocklist)
 - **ON:** alleen whitelisted wapens zijn toegestaan (allowlist)
-- `ALLOWED_WEAPONS` uitgebreid naar **alle GTA V wapens** (incl. alle MK2 varianten, melee, throwables, tools)
+- `ALLOWED_WEAPONS` uitgebreid naar **alle GTA V wapens**:
+  - MK2 varianten
+  - melee weapons
+  - throwables
+  - tools
 
 ---
 
 ### 🎨 Event Policies UI
 
-- Save buttons hernoemd: **"Model Lijsten & Thresholds Opslaan"** (purple) vs **"Trigger Regels Opslaan"** (cyan)
+- Save buttons hernoemd:
+  - **"Model Lijsten & Thresholds Opslaan"** (purple)
+  - **"Trigger Regels Opslaan"** (cyan)
 - **"Toegestane voertuigen (geen spawn-kick)"** textarea toegevoegd
 - Per-line model/wapen invoer (geen komma's)
-- "Geblokkeerde wapens" triggers configureerbare warn/kick/ban
+- "Geblokkeerde wapens" triggers configureerbare warn/kick/ban acties
 
 ---
 
@@ -70,7 +84,11 @@ Nieuwe client-side scan (elke 13s) die detecteert:
 - **Drijvende hex waardes** — `FF`, `A1`, `7C` die langzaam over het scherm zweven
 - **Pulsende glow** — trage fade animatie
 - **Scanlines** — zeer subtiel
-- Zichtbaar op ALLE pagina's (loading, welcome, dashboard, elke tab)
+- Zichtbaar op ALLE pagina's:
+  - loading
+  - welcome
+  - dashboard
+  - alle tabs
 - Geen mounting/dismounting issues bij login/logout
 
 #### Spinning Circle SVG
@@ -81,7 +99,12 @@ Nieuwe client-side scan (elke 13s) die detecteert:
 
 ### 🐛 Bug Fixes
 
-- **Lua parse error:** alle `if not IsDuplicityVersion() then` wraps verwijderd uit `client.lua` — redundant en veroorzaakte `SCRIPT ERROR: ')' expected near 'if'`
+- **Lua parse error:** alle `if not IsDuplicityVersion() then` wraps verwijderd uit `client.lua`
+  - Redundant
+  - Veroorzaakte:
+    ```txt
+    SCRIPT ERROR: ')' expected near 'if'
+    ```
 - **JSX syntax:** stray `</div>` in `EventPolicies.tsx` gefixt
 - **Footer versie:** geüpdatet naar `v2026.05.27.02`
 
@@ -89,16 +112,4 @@ Nieuwe client-side scan (elke 13s) die detecteert:
 
 ### 📝 Nieuwe/gewijzigde Convars
 
-```cfg
-# Vehicle spawn
-setr dbmk_vehicle_spawn_policy "shop_only"
-setr dbmk_vehicle_spawn_post_grace_ms "5000"   # was 1200, max 15000
-setr dbmk_vehicle_spawn_auto_grace "true"
-setr dbmk_vehicle_spawn_auto_grace_seconds "20"
-setr dbmk_vehicle_spawn_grace_events ""
-
-# Security toggles
-setr dbmk_integrity_guard "true"
-setr dbmk_godmode_guard "true"
-setr dbmk_boost_guard "true"
-setr dbmk_freecam_guard "true"
+```cf

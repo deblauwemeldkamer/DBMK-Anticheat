@@ -1,0 +1,104 @@
+## v2026.05.27.02 — Security, vehicle spawn fixes, animated background, UI improvements
+
+### 🚨 Security
+
+#### Lua Obfuscatie (download)
+- Alle comments worden gestript uit `client.lua` en `server.lua` bij download
+- Gevoelige strings (menunamen, convar namen, detection types) gemarkeerd voor obfuscation
+- **Effect:** cheat developers kunnen detectie signatures niet meer uitlezen uit de CFX cache
+
+#### NUI Callback Rate Limiting
+- Per-callback cooldown: **250ms** tussen identieke calls
+- Burst limit: **max 15 calls/sec** over alle callbacks
+- Alle 30+ NUI tablet callbacks zijn nu gewrapped met `nuiWrapped()`
+- **Effect:** een cheater kan de tablet niet meer floden met duizenden kick/ban/teleport calls
+
+#### Tablet Token Fix
+- **Oud:** `"SECURE_" .. GetPlayerServerId(PlayerId())` — voorspelbaar
+- **Nieuw:** `"TKN_" .. hash(timer + random + serverId) .. timestamp` — uniek per sessie
+- **Effect:** token is niet te forgen van alleen een server ID
+
+#### Generic Executor API Detectie
+Nieuwe client-side scan (elke 13s) die detecteert:
+- `TriggerServerEvent` / `RegisterNetEvent` **gehooked** door een executor
+- `load` / `loadstring` **toegankelijk** (hoort nil te zijn in FiveM)
+- `debug.getregistry` **toegankelijk** (geblokkeerd in vanilla FiveM)
+- `Citizen.InvokeNative` **gehooked**
+- `getsenv` / `getfenv` / `hookmetamethod` **toegankelijk**
+- **Effect:** generieke Lua executors (Wave, Solara, Hyperion) worden nu ook gevonden
+
+#### Server Token uit README verwijderd
+- `Tenant ID`, `Server ID` blijven in README.txt
+- **Server Token is verwijderd** — staat alleen in `server.cfg`
+- **Effect:** als de zip wordt gedeeld, is het API token niet gecompromitteerd
+
+---
+
+### 🚗 Vehicle Spawn Policy — False Positives
+
+- **Grace window:** 1.200ms → **5.000ms** (max 15.000ms)
+- **Periodieke rechecks:** elke 1.500ms checken i.p.v. eenmalig wachten — als `grant_vehicle_spawn_grace` binnen 15s alsnog komt, wordt voertuig gespaard
+- **Auto-grace events** toegevoegd voor: `jg_advancedgarages`, `jg_garages`, `qb-garage`, `cd_garage`, `okokgarage`, `qs-*`, `jim-shops`, `jim-mechanic`
+- **`allowedVehicleModels`** — nieuw veld + UI + config loader. Modellen in deze lijst skippen de policy check volledig
+- Grace period: 14s → 20s
+- Configuratie-sync via `/api/fivem/policies` — geen nieuwe bundle nodig
+
+---
+
+### 🔫 Weapon Whitelist Toggle
+
+- **`weaponWhitelistEnabled`** toggle in Event Policies ("Strict whitelist" aan/uit)
+- **OFF:** alleen "Geblokkeerde wapens" worden gehandhaafd (blocklist)
+- **ON:** alleen whitelisted wapens zijn toegestaan (allowlist)
+- `ALLOWED_WEAPONS` uitgebreid naar **alle GTA V wapens** (incl. alle MK2 varianten, melee, throwables, tools)
+
+---
+
+### 🎨 Event Policies UI
+
+- Save buttons hernoemd: **"Model Lijsten & Thresholds Opslaan"** (purple) vs **"Trigger Regels Opslaan"** (cyan)
+- **"Toegestane voertuigen (geen spawn-kick)"** textarea toegevoegd
+- Per-line model/wapen invoer (geen komma's)
+- "Geblokkeerde wapens" triggers configureerbare warn/kick/ban
+
+---
+
+### 🖥️ Animated Terminal Background
+
+- Nieuwe CSS-only animated background (geen canvas, geen JS overhead)
+- **Dot grid** — cyaan stippen om de 48px
+- **Drijvende hex waardes** — `FF`, `A1`, `7C` die langzaam over het scherm zweven
+- **Pulsende glow** — trage fade animatie
+- **Scanlines** — zeer subtiel
+- Zichtbaar op ALLE pagina's (loading, welcome, dashboard, elke tab)
+- Geen mounting/dismounting issues bij login/logout
+
+#### Spinning Circle SVG
+- `EventPolicies.tsx` — Lock icon vervangen door spinning circle met Lock in het midden (matching landing page stijl)
+- `App.tsx` — "Terminal Vergrendeld" Lock icon vervangen door spinning circle met gradient + glow
+
+---
+
+### 🐛 Bug Fixes
+
+- **Lua parse error:** alle `if not IsDuplicityVersion() then` wraps verwijderd uit `client.lua` — redundant en veroorzaakte `SCRIPT ERROR: ')' expected near 'if'`
+- **JSX syntax:** stray `</div>` in `EventPolicies.tsx` gefixt
+- **Footer versie:** geüpdatet naar `v2026.05.27.02`
+
+---
+
+### 📝 Nieuwe/gewijzigde Convars
+
+```cfg
+# Vehicle spawn
+setr dbmk_vehicle_spawn_policy "shop_only"
+setr dbmk_vehicle_spawn_post_grace_ms "5000"   # was 1200, max 15000
+setr dbmk_vehicle_spawn_auto_grace "true"
+setr dbmk_vehicle_spawn_auto_grace_seconds "20"
+setr dbmk_vehicle_spawn_grace_events ""
+
+# Security toggles
+setr dbmk_integrity_guard "true"
+setr dbmk_godmode_guard "true"
+setr dbmk_boost_guard "true"
+setr dbmk_freecam_guard "true"

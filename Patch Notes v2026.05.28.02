@@ -1,0 +1,74 @@
+# 📜 DBMK Anticheat — Patch Notes v2026.05.28.02
+
+---
+
+## 🔒 SECURITY & ANTI-TAMPER
+
+- Lua Obfuscatie — comments gestript uit `client.lua` en `server.lua` bij download
+- NUI Rate Limiting — max 15 calls/sec, 250ms cooldown toegepast op alle 30+ tablet callbacks
+- Tablet Token — vervangen van voorspelbare `SECURE_ + serverId` naar random secure token
+- Executor API Detectie — detectie van:
+  - `TriggerServerEvent` hooks
+  - `RegisterNetEvent` abuse
+  - `load / loadstring`
+  - `debug.getregistry`
+  - `hookmetamethod`
+  - `getsenv`
+  - `Citizen.InvokeNative`
+- Server token verwijderd uit `README.txt` in distributie ZIP
+
+---
+
+## 🚗 VEHICLE SPAWN POLICY
+
+- Grace window verhoogd: **1.200ms → 5.000ms** (max 15s detectie window)
+- Periodieke rechecks: elke 1.500ms tot 15s
+- Auto-grace events uitgebreid voor:
+  - JG
+  - QB
+  - CD
+  - OKOK
+  - QS
+  - Jim Shops
+- Nieuw veld: `allowedVehicleModels` toegevoegd + UI + config loader
+- Grace period verhoogd: **14s → 20s**
+
+---
+
+## 🔫 WEAPON WHITELIST
+
+- Nieuwe toggle: `weaponWhitelistEnabled` (Strict whitelist ON/OFF)
+- `ALLOWED_WEAPONS` uitgebreid naar alle GTA V wapens:
+  - MK2 weapons
+  - Melee weapons
+  - Throwables
+  - Tools
+
+---
+
+## 🖥️ UI & VISUAL
+
+- Network Graph Background toegevoegd op alle pagina’s
+- Terminal icon (`>_`) terug in top bar
+- Patch Notes knop toegevoegd (📜 New) met volledige changelog modal
+- Spinning circles toegevoegd bij Event Policies locked state + Terminal lock screen
+- Platform Updates knop verwijderd uit top bar
+
+---
+
+## 🐛 BUG FIXES
+
+- Lua parse error gefixt — `IsDuplicityVersion` wraps verwijderd uit `client.lua`
+- Comment stripper regex gefixt — te agressief, brak strings met `--`
+- Coin checkout gefixt — gebruikt nu bestaande `/api/create-checkout-session`
+- Coin aankopen maken geen valse licenties meer aan
+- Coin badge gefixt — gebruikt nu `dbService.getTenantContext()`
+- Language switch verwijderd uit top bar
+- Sidebar + Welcome runtime errors opgelost (`menuItems` / `w` undefined)
+
+---
+
+## ✅ Build Information
+
+**Build:** v2026.05.28.02  
+**Date:** 28 mei 2026
